@@ -3,42 +3,7 @@ guid: 4256f224e941f2b4fb5160015ba5713c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Asset_Glass
-    second: {fileID: 2100000, guid: 5d5168effa6de394c80f064d5570e3c4, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: MatBrazos.001
-    second: {fileID: 2100000, guid: 7a5a1bc4b3e413f41be36f77394c9d7e, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: MatCuerpo.002
-    second: {fileID: 2100000, guid: 741e8edee3658ca46b672cc74ea6c64b, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: MatCuerpo.004
-    second: {fileID: 2100000, guid: 7fe095361f4c13b4589698d029e5763d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: MatCuerpo003
-    second: {fileID: 2100000, guid: 74a39936dbf739e4dac119c167a476d7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: MatPiernas.001
-    second: {fileID: 2100000, guid: e006c66a6470c14418f900467e631f85, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: MatPiernas2
-    second: {fileID: 2100000, guid: ab31a90eafa599744ad048fe0552d8d4, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -124,7 +89,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.6
+    globalScale: 0.006
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
