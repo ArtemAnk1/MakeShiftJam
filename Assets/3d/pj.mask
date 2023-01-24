@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: pj
+  m_Mask: 01000000000000000100000000000000000000000000000000000000000000000000000000000000000000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Armature
+    m_Weight: 1
+  - m_Path: Armature/HIP
+    m_Weight: 1
+  - m_Path: Armature/HIP/LeftUpper
+    m_Weight: 1
+  - m_Path: Armature/HIP/LeftUpper/LeftMid
+    m_Weight: 1
+  - m_Path: Armature/HIP/LeftUpper/LeftMid/LeftTip
+    m_Weight: 1
+  - m_Path: Armature/HIP/LeftUpper/LeftMid/LeftTip/LeftTip_end
+    m_Weight: 1
+  - m_Path: Armature/HIP/RightUpper
+    m_Weight: 1
+  - m_Path: Armature/HIP/RightUpper/RightMid
+    m_Weight: 1
+  - m_Path: Armature/HIP/RightUpper/RightMid/RightTip
+    m_Weight: 1
+  - m_Path: Armature/HIP/RightUpper/RightMid/RightTip/RightTip_end
+    m_Weight: 1
+  - m_Path: Armature/IKleftleg
+    m_Weight: 1
+  - m_Path: Armature/IKleftleg/IKleftleg_end
+    m_Weight: 1
+  - m_Path: Armature/IKRightLeg
+    m_Weight: 1
+  - m_Path: Armature/IKRightLeg/IKRightLeg_end
+    m_Weight: 1
+  - m_Path: Armature/PoleLeftIK
+    m_Weight: 1
+  - m_Path: Armature/PoleLeftIK/PoleLeftIK_end
+    m_Weight: 1
+  - m_Path: Armature/PoleRightIK
+    m_Weight: 1
+  - m_Path: Armature/PoleRightIK/PoleRightIK_end
+    m_Weight: 1
+  - m_Path: Armature.001
+    m_Weight: 1
+  - m_Path: Armature.001/Hip
+    m_Weight: 1
+  - m_Path: Armature.001/Hip/Bone.003
+    m_Weight: 1
+  - m_Path: Armature.001/Hip/Bone.003/Bone.004
+    m_Weight: 1
+  - m_Path: Armature.001/Hip/Bone.003/Bone.004/Bone.005
+    m_Weight: 1
+  - m_Path: Armature.001/Hip/Bone.003/Bone.004/Bone.005/Bone.005_end
+    m_Weight: 1
+  - m_Path: Armature.001/Hip/LeftArmRoot
+    m_Weight: 1
+  - m_Path: Armature.001/Hip/LeftArmRoot/LeftArmMid
+    m_Weight: 1
+  - m_Path: Armature.001/Hip/LeftArmRoot/LeftArmMid/LeftArmTip
+    m_Weight: 1
+  - m_Path: Armature.001/Hip/LeftArmRoot/LeftArmMid/LeftArmTip/LeftArmTip_end
+    m_Weight: 1
+  - m_Path: Armature.001/Object010.006
+    m_Weight: 0
+  - m_Path: Cube.009
+    m_Weight: 0
