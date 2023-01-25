@@ -4,6 +4,7 @@ using System.Numerics;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering.Universal.Internal;
 using UnityEngine.Serialization;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
@@ -51,35 +52,39 @@ public class Movement : MonoBehaviour
     {
         
         if (dashing)
-        {
-            if (dashAux < dashTime * 0.1f)
-            {
-                currentDashSpeed += 60000*Time.deltaTime;
-                if (currentDashSpeed > maxDashSpeed)
-                {
-                    currentDashSpeed = maxDashSpeed;
-                }
-            }
-            if (dashAux > dashTime * 0.35f)
-            {
-                currentDashSpeed -= 25000*Time.deltaTime;
-                if (currentDashSpeed < baseDashSpeed)
-                {
-                    currentDashSpeed = baseDashSpeed;
-                }
-            }
-            dashAux += Time.deltaTime;
-            if (dashAux >= dashTime * 0.9f)canMove = true;
-            
-            if (dashAux >= dashTime)
-            {
-                dashing = false;
-                dashOnCd = true;
-                canMove = true;
-                dashAux = 0; 
-            }
-            rb.velocity= lastHeading * (currentDashSpeed * Time.deltaTime);
-            HandleRotation(lastHeading,speedToLookAtDir);
+        { DashCoroutine();
+          
+        //     if (dashAux < dashTime * 0.1f)
+        //     {
+        //         currentDashSpeed += 60000*Time.deltaTime;
+        //         if (currentDashSpeed > maxDashSpeed)
+        //         {
+        //             currentDashSpeed = maxDashSpeed;
+        //         }
+        //     }
+        //     if (dashAux > dashTime * 0.35f)
+        //     {
+        //         currentDashSpeed -= 25000*Time.deltaTime;
+        //         if (currentDashSpeed < baseDashSpeed)
+        //         {
+        //             currentDashSpeed = baseDashSpeed;
+        //         }
+        //     }
+        //     dashAux += Time.deltaTime;
+        //     if (dashAux >= dashTime * 0.9f)canMove = true;
+        //     
+        //     if (dashAux >= dashTime)
+        //     {
+        //         dashing = false;
+        //         dashOnCd = true;
+        //         canMove = true;
+        //         dashAux = 0; 
+        //     }
+        //     rb.velocity= Vector3.Lerp(rb.velocity,lastHeading * (maxDashSpeed * Time.deltaTime),)
+        //     rb.velocity= lastHeading * (currentDashSpeed * Time.deltaTime);
+        //     HandleRotation(lastHeading,speedToLookAtDir);
+        //
+     
         }
 
         if (dashOnCd)
@@ -92,14 +97,58 @@ public class Movement : MonoBehaviour
             }
         }
 
-        if (canDash && !dashing && !dashOnCd) if (Input.GetKey(KeyCode.LeftShift))
+        if (canDash && !dashing && !dashOnCd) if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 canMove = false;
                 dashing = true;
                 currentDashSpeed = baseDashSpeed;
+                t = 0;
+               cachedSpeed = rb.velocity; 
             }
+        
+        
+        
+        
+        
+   
+        
+        
+        
+        
+        
     }
-    
+
+    public Vector3 cachedSpeed { get; set; }
+
+    private float t = 0;
+    public AnimationCurve dashCurve;
+   void DashCoroutine()
+    {
+       
+        
+       
+       
+        if (t < dashTime)
+        { 
+            if (t >= dashTime * 0.9f)canMove = true;
+            t += Time.deltaTime;
+            rb.velocity = Vector3.Lerp(cachedSpeed, maxDashSpeed*dashCurve.Evaluate(t) *lastHeading, t / dashTime);
+           
+        }
+        else
+        {
+              currentSpeedMult = 0;
+              t = 0;
+                       dashing = false;
+                       dashOnCd = true;
+                       canMove = true;
+                       dashAux = 0; 
+        }
+
+     
+           
+        
+    }
     public float speedToLookAtDir = 45;
     private void HandleRotation(Vector3 heading)
     {
@@ -163,4 +212,6 @@ public class Movement : MonoBehaviour
      
         
     }
+
+    
 }
