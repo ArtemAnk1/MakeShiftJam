@@ -188,7 +188,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 12
+  orthographic size: 15
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1929,17 +1929,59 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canDash: 1
   dashing: 0
-  maxDashSpeed: 10000
-  baseDashSpeed: 1500
-  dashTime: 0.25
+  maxDashSpeed: 115
+  baseDashSpeed: 100
+  dashTime: 0.27
   dashAux: 0
-  dashCdTime: 2
+  dashCdTime: 1
   currentDashSpeed: 0
-  speedToLookAtDir: 300
+  dashCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0000010174699
+      value: 0.2122584
+      inSlope: 2.971698
+      outSlope: 2.971698
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.050209206
+    - serializedVersion: 3
+      time: 0.073638715
+      value: 0.9930526
+      inSlope: -0.51512593
+      outSlope: -0.51512593
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.27818003
+      value: 0.633652
+      inSlope: -1.8080463
+      outSlope: -1.8080463
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.25324714
+    - serializedVersion: 3
+      time: 0.32
+      value: 0.015449215
+      inSlope: -9.171414
+      outSlope: -9.171414
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.13176966
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  speedToLookAtDir: 500
   moveSpeedBase: 180
   accelValue: 8
   deccelValue: 35
-  baseSpeedMult: 2.5
+  baseSpeedMult: 2
   currentSpeedMult: 0
   maxSpeedMult: 5
   inertiaValue: 130
@@ -3001,7 +3043,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1868251621}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.009999752, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
