@@ -5,27 +5,25 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal.Internal;
 using UnityEngine.Serialization;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
-public class Movement : MonoBehaviour
+public class Player : MonoBehaviour
 {
+    [Header("STARTVARS")] [Space(10)]
     private Rigidbody rb;
     private float yOffset;
     private float cameraOffset;
     private Camera cam;
     private GameObject cursor;
     public GameObject rotatingPart;
-
-    public bool canShoot = true;
-    public bool charging = false;
-    public bool shooting = false;
-
+ 
     private void Start()
     {
-        rotatingPart = GameObject.Find("HipUpperRig");
+        rotatingPart = GameObject.Find("HipUpper");
         cursor = FindObjectOfType<CursorPointer>().gameObject;
         currentSpeedMult = baseSpeedMult;
         GetWorldsForward();
@@ -49,19 +47,28 @@ public class Movement : MonoBehaviour
     private void FixedUpdate()
     {
         if (rb == null) rb = GetComponent<Rigidbody>();
-        if (canMove) MovementXY();
+        if (canMove)
+        {
+            MovementXY();
+        }
        
-        BodySpin();
+       
+      if(!attacking)  BodySpin();
     
     }
-
+   
     void Update()
     {
+        if (canShoot)
+        {
+            Shoot();
+        }
         if (canAttack && !dashing && !shooting) Attack();
      Dash();
-     
+    
     }
-
+    [Space(10)]
+    [Header("ATTACKS")] [Space(10)]
     public bool canAttack = true;
     public bool attacking = false;
     public int comboCount = 0;
@@ -76,6 +83,189 @@ public class Movement : MonoBehaviour
     [SerializeField] private float tiempoActualParaCombar = 0;
     public bool waitingForCombo = false;
     public bool cachedAttack = false;
+    [Space(10)]
+    [Header("SHOOTING")] [Space(10)]
+    public bool canShoot = true;
+    public bool charging = false;
+    public bool shooting = false;
+    [SerializeField] private float duracionDeDisparoActual = 0;
+    public GameObject[] disparosObjetos;
+    public float[] tiemposDeCarga;
+    public float tiempoActualDeCarga = 0;
+    private float auxTiempoCarga=0;
+    public float[] duracionesDeDisparos;
+    public float cooldownTrasDisparo = 2f;
+    [SerializeField] private float timerAuxDisp=0;
+    void Shoot()
+    {
+        if (timerAuxDisp > 0)
+        {
+            timerAuxDisp -= Time.deltaTime;
+            if (timerAuxDisp < 0)
+            {
+                timerAuxDisp = 0;
+            }
+        }
+        if (piezasListas.Count >= 1&&timerAuxDisp==0)
+        {
+           
+            if (Input.GetKeyDown(KeyCode.Mouse1)&&!shooting)
+            { 
+                charging = true;
+                auxTiempoCarga = 0;
+
+                tiempoActualDeCarga = tiemposDeCarga[SeleccionDisparo()];
+                rb.velocity = Vector3.zero;
+
+            }
+        
+
+            if (charging)
+            {
+                canMove = false;
+                if (Input.GetKey(KeyCode.Mouse1))
+                {
+                    auxTiempoCarga += Time.deltaTime;
+               
+                }
+                else if (Input.GetKeyUp(KeyCode.Mouse1))
+                {
+                    if (auxTiempoCarga > tiempoActualDeCarga)
+                    {
+                        tiempoActualDeCarga = 0;
+                        charging = false;
+                        shooting = true;
+                        auxTiempoCarga = 0;
+                        duracionDeDisparoActual = duracionesDeDisparos[SeleccionDisparo()];
+                        
+                        disparosObjetos[SeleccionDisparo()].SetActive((true));
+                        
+                        
+                    }
+                    else
+                    {  charging = false;
+                        canMove = true;
+                        auxTiempoCarga = 0;
+                        tiempoActualDeCarga = 0;
+                    }
+                }
+                else
+                {
+                    charging = false;
+                    canMove = true;
+                    auxTiempoCarga = 0;
+                    tiempoActualDeCarga = 0; 
+                }
+            }
+
+            if (shooting)
+            {
+                duracionDeDisparoActual -= Time.deltaTime;
+                if (duracionDeDisparoActual < 0)
+                {
+                    duracionDeDisparoActual = 0;
+                    disparosObjetos[SeleccionDisparo()].SetActive((false));
+                    shooting = false;
+                    piezasListas.Remove(piezasListas[0]);
+                    canMove = true;
+                    timerAuxDisp = cooldownTrasDisparo;
+                    fullPiezas = false;
+                }
+            }
+        }
+           
+    }
+
+    int SeleccionDisparo()
+    {
+        int value = 0;
+        if (piezasListas[0].fusionAa)
+        {
+            value = 0;
+        } else if (piezasListas[0].fusionAb)
+        {
+            value = 1;
+        }
+       else 
+        if (piezasListas[0].fusionBb)
+        {
+            value = 2;
+        }
+       
+        return value;
+    }
+    [Space(10)] [Header("PIEZAS")] [Space(10)]
+    public List<Pieza> piezasRecogidas = new List<Pieza>();
+
+    public List<Pieza> piezasListas = new List<Pieza>();
+    public bool fullPiezas = false;
+    public int maxCapacidadPiezas=3;
+    public void CogerPieza(Pieza pieza)
+    {
+        if (piezasRecogidas.Count == 0)
+        {
+            if (piezasListas.Count <3)
+            {
+                piezasRecogidas.Add((pieza));
+            }
+        }
+        else
+        {
+            if (piezasListas.Count <= maxCapacidadPiezas)
+            {
+                piezasRecogidas.Add((pieza));
+                CalculaPiezaFinal();
+                piezasRecogidas.Clear();
+                fullPiezas = false;
+                if (piezasListas.Count == maxCapacidadPiezas)
+                {
+                    fullPiezas = true;
+                }
+            }
+            else
+            {
+                
+            }
+        }
+        
+      
+    }
+
+    void CalculaPiezaFinal()
+    {
+        if(piezasRecogidas[0].piezaA&&piezasRecogidas[1].piezaA)
+        {
+            Pieza p = new Pieza();
+            p.fusionAa = true;
+            piezasListas.Add(p);
+        }
+        if(!piezasRecogidas[0].piezaA&&!piezasRecogidas[1].piezaA)
+        {  Pieza p = new Pieza();
+            p.fusionBb = true;
+            piezasListas.Add(p);
+          
+        }
+        if(piezasRecogidas[0].piezaA!=piezasRecogidas[1].piezaA)
+        {  Pieza p = new Pieza();
+            p.fusionAb = true;
+            piezasListas.Add(p);
+        
+        }
+
+        if (piezasListas.Count >= maxCapacidadPiezas)
+        {
+            fullPiezas = true;
+            foreach (var VARIABLE in piezasListas)
+            {
+                  print(VARIABLE.fusionAb+"ISAB"+VARIABLE.fusionAa+"ESAA"+VARIABLE.fusionBb+"ESBB");
+            }
+          
+        }
+        else
+        {
+            fullPiezas = false;
+        }
+    }
 
     private void Attack()
     {
@@ -152,8 +342,19 @@ public class Movement : MonoBehaviour
                 finishedCombo = false;
             }
         }
-    }
 
+        if (attacking )
+        {
+            canShoot = false;
+            
+        }
+        else if(!dashing)
+        {
+            canShoot = true;
+        }
+    }
+    [Space(10)]
+    [Header("ROTATION")] [Space(10)]
     public GameObject bodySpinning;
     public float bodyRotationSpeed = 300;
     public float hipStartingY;
@@ -166,7 +367,8 @@ public class Movement : MonoBehaviour
         rotatingPart.transform.rotation = Quaternion.RotateTowards(rotatingPart.transform.rotation, rotDesired,
             bodyRotationSpeed * Time.deltaTime);
     }
-
+    [Space(10)]
+    [Header("Dash")] [Space(10)]
     public bool canDash = true;
     public bool dashing = false;
     public float maxDashSpeed = 10f;
@@ -222,8 +424,19 @@ public class Movement : MonoBehaviour
                 t = 0;
                 cachedSpeed = rb.velocity;
             }
+        if (dashing )
+        {
+            canShoot = false;
+            
+        }
+        else if(!shooting)
+        {
+            canShoot = true;
+        }
     }
-
+    
+    [Header("ROTATIONSPEED")]
+    [Space(10)]
     public float speedToLookAtDir = 45;
 
     private void HandleRotation(Vector3 heading)
@@ -232,7 +445,9 @@ public class Movement : MonoBehaviour
         transform.rotation =
             Quaternion.RotateTowards(transform.rotation, rotDesired, speedToLookAtDir * Time.deltaTime);
     }
-
+    [Space(10)]
+    [Header("MOVEMENT")]
+    [Space(10)]
     public float moveSpeedBase = 4f;
     public float accelValue = 1.3f;
     public float deccelValue = 1.3f;
