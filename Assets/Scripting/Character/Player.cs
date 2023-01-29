@@ -20,10 +20,11 @@ public class Player : MonoBehaviour
     private Camera cam;
     private GameObject cursor;
     public GameObject rotatingPart;
- 
+    public GameObject bodyRotatingPart;
     private void Start()
     {
-        rotatingPart = GameObject.Find("HipUpper");
+        rotatingPart = GameObject.Find("Rig 1");
+        bodyRotatingPart = GameObject.Find("Rig2");
         cursor = FindObjectOfType<CursorPointer>().gameObject;
         currentSpeedMult = baseSpeedMult;
         GetWorldsForward();
@@ -563,8 +564,8 @@ public class Player : MonoBehaviour
     private void HandleRotation(Vector3 heading)
     {
         var rotDesired = Quaternion.LookRotation(heading, Vector3.up);
-        transform.rotation =
-            Quaternion.RotateTowards(transform.rotation, rotDesired, speedToLookAtDir * Time.deltaTime);
+        bodyRotatingPart.transform.rotation =
+            Quaternion.RotateTowards(  bodyRotatingPart.transform.rotation, rotDesired, speedToLookAtDir * Time.deltaTime);
     }
     [Space(10)]
     [Header("MOVEMENT")]
@@ -606,12 +607,14 @@ public class Player : MonoBehaviour
         {
             desiredHeading = Vector3.MoveTowards(transform.forward, heading, inertiaValue * Time.deltaTime);
             lastHeading = desiredHeading;
-            if (!attacking&&!shooting) HandleRotation(desiredHeading);
+          //  if (!attacking&&!shooting)
+             HandleRotation(desiredHeading);
         }
         else
         {
             desiredHeading = Vector3.MoveTowards(transform.forward, lastHeading, inertiaValue * Time.deltaTime);
-            if (!attacking&&!shooting) HandleRotation(desiredHeading);
+           // if (!attacking&&!shooting)
+             HandleRotation(desiredHeading);
         }
 
         rb.velocity = desiredHeading * (moveSpeedBase * currentSpeedMult * Time.deltaTime);
