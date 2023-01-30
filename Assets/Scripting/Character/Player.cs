@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer;
@@ -21,6 +22,8 @@ public class Player : MonoBehaviour
     private GameObject cursor;
     public GameObject rotatingPart;
     public GameObject bodyRotatingPart;
+    public GameObject boss;
+    public BossPrimero scriptBoss;
     private void Start()
     {
         rotatingPart = GameObject.Find("Rig 1");
@@ -32,6 +35,8 @@ public class Player : MonoBehaviour
         yOffset = transform.position.y;
         cam = Camera.main;
         hipStartingY = rotatingPart.transform.position.y;
+        boss = FindObjectOfType<BossPrimero>().gameObject;
+        scriptBoss = boss.GetComponent<BossPrimero>();
     }
 
 
@@ -78,12 +83,17 @@ public class Player : MonoBehaviour
     public GameObject[] ataquesObjetos;
     public float[] tiempoParaCombar;
     public float[] duracionesDeAtaques;
+    public float[] anguloAperturaAtaques;
+    public float anguloActual;
+    public float[] distanciaMaxAtaques;
+    public float actualDistanciaMax;
     public float cooldownAfterCombo = 2f;
     [SerializeField] private float timerAuxCD;
     [SerializeField] private bool finishedCombo = false;
     [SerializeField] private float tiempoActualParaCombar = 0;
     public bool waitingForCombo = false;
     public bool cachedAttack = false;
+    
     private void Attack()
     {
         if (duracionDeAtaqueActual == 0 && comboCount < maxComboCount && timerAuxCD == 0 &&
@@ -91,11 +101,27 @@ public class Player : MonoBehaviour
         {
             ataquesObjetos[comboCount].gameObject.SetActive(true);
             duracionDeAtaqueActual = duracionesDeAtaques[comboCount];
-
+            actualDistanciaMax = distanciaMaxAtaques[comboCount];
+            anguloActual = anguloAperturaAtaques[comboCount];
             attacking = true;
         }
         else if (attacking)
         {
+            CheckBossCollision(anguloActual, actualDistanciaMax, out bool espalda, out bool hit);
+            if (hit)
+            {
+                if(scriptBoss.actualTiempoSinDañoMelee<=0)
+                {
+           
+                    int ataqueSelecc = comboCount;
+                    float multip = 1;
+                    if (espalda) multip = scriptBoss.multipEspalda;
+                    
+                    if(scriptBoss.stunned)   scriptBoss.ReceiveEsfuerzo(dañosNormales[ataqueSelecc]*scriptBoss.multipDañoMeleSiStun);
+                    scriptBoss.ReceiveEsfuerzo(dañosNormales[ataqueSelecc]*multip);
+                    scriptBoss.actualTiempoSinDañoMelee = duracionDeAtaqueActual+0.1f;
+                }
+            }
             duracionDeAtaqueActual -= Time.deltaTime;
             if (duracionDeAtaqueActual <= 0)
             {
@@ -144,7 +170,8 @@ public class Player : MonoBehaviour
                     duracionDeAtaqueActual = duracionesDeAtaques[comboCount];
                     finishedCombo = false;
                     tiempoActualParaCombar = 0;
-                   
+                    actualDistanciaMax = distanciaMaxAtaques[comboCount];
+                    anguloActual = anguloAperturaAtaques[comboCount];
             }
 
           
@@ -170,7 +197,46 @@ public class Player : MonoBehaviour
             canShoot = true;
         }
     }
-   
+
+    void CheckBossCollision(float angulo, float distancia,out bool espalda,out bool hit)
+    {           
+                 espalda = false;
+                 hit = false;
+                 Vector3 hitpoint=boss.transform.position;
+                 hitpoint.y = this.transform.position.y;
+                 var desPos = new Vector3(cursor.transform.position.x,  this.transform.position.y,
+                     cursor.transform.position.z);
+                 Vector3 forwarY0 =(desPos-this.transform.position);
+                 forwarY0.y = this.transform.position.y;
+                 if (Physics.Raycast(this.transform.position, forwarY0, out RaycastHit rayhit, distancia))
+                 {
+
+                     hitpoint = rayhit.point;
+                     hitpoint.y = this.transform.position.y;
+                  
+                 }
+                 
+                Vector3 direccion = hitpoint - this.transform.position;
+            
+                direccion.y = 0;
+                
+                if (Vector3.Angle(forwarY0, direccion) <= angulo)
+                 {
+                     
+                      
+                 if (Physics.Raycast(transform.position, direccion, out RaycastHit t, distancia))
+                 {  
+                Debug.DrawRay(transform.position,new Vector3( direccion.normalized.x,0, direccion.normalized.z)*distancia,Color.red,2f);
+                     hit = true;
+                     if (t.collider.GetComponent<CollidersHijos>()?.esDebil ??false) espalda = true;
+                 }
+                 
+                 }
+        
+        
+
+    }
+
     [Space(10)]
     [Header("SHOOTING")] [Space(10)]
     public bool canShoot = true;
@@ -182,6 +248,8 @@ public class Player : MonoBehaviour
     public float tiempoActualDeCarga = 0;
     private float auxTiempoCarga=0;
     public float[] duracionesDeDisparos;
+    public float[] distanciaMaxCargado;
+    public float[] anguloAperturaCargados;
     public float cooldownTrasDisparo = 2f;
     [SerializeField] private float timerAuxDisp=0;
   
@@ -229,8 +297,8 @@ public class Player : MonoBehaviour
                         duracionDeDisparoActual = duracionesDeDisparos[SeleccionDisparo()];
                         
                         disparosObjetos[SeleccionDisparo()].SetActive((true));
-                        
-                        
+                        anguloActual = anguloAperturaCargados[SeleccionDisparo()];
+                        actualDistanciaMax = distanciaMaxCargado[SeleccionDisparo()];
                     }
                     else
                     {  charging = false;
@@ -249,7 +317,20 @@ public class Player : MonoBehaviour
             }
 
             if (shooting)
-            {
+            {  CheckBossCollision(anguloActual, actualDistanciaMax, out bool espalda, out bool hit);
+                if (hit)
+                {
+                   
+           
+                        int ataqueSelecc = SeleccionDisparo();
+                        float multip = 1;
+                        if (espalda) multip = scriptBoss.multipEspaldaDistancia;
+                    
+                        if(scriptBoss.stunned)   scriptBoss.ReceiveDamage(dañosCargados[ataqueSelecc]*Time.deltaTime);
+                        scriptBoss.ReceiveDamage(dañosCargados[ataqueSelecc]*multip*Time.deltaTime);
+                        
+                    
+                }
                 duracionDeDisparoActual -= Time.deltaTime;
                 if (duracionDeDisparoActual < 0)
                 {
@@ -268,20 +349,24 @@ public class Player : MonoBehaviour
     }
 
    public int SeleccionDisparo()
-    {
-        int value = 0;
-        if (piezasListas[0].fusionAa)
+    { int value = 0;
+        if (piezasListas.Count>=0)
         {
-            value = 0;
-        } else if (piezasListas[0].fusionAb)
-        {
-            value = 1;
+             if (piezasListas[0].fusionAa)
+                    {
+                        value = 0;
+                    } else if (piezasListas[0].fusionAb)
+                    {
+                        value = 1;
+                    }
+                   else 
+                    if (piezasListas[0].fusionBb)
+                    {
+                        value = 2;
+                    }
         }
-       else 
-        if (piezasListas[0].fusionBb)
-        {
-            value = 2;
-        }
+       
+       
        
         return value;
     }
@@ -308,8 +393,16 @@ public class Player : MonoBehaviour
     {
         if (piezasRecogidas.Count == 0)
         {
+            
             if (piezasListas.Count <3)
             {
+          
+                
+            
+               
+                
+                
+                
                 piezasRecogidas.Add((pieza));
                 AddVisualSlot(pieza);
             }
@@ -439,20 +532,30 @@ public class Player : MonoBehaviour
     {
         if(piezasRecogidas[0].piezaA&&piezasRecogidas[1].piezaA)
         {
-            Pieza p = new Pieza();
+            
+            GameObject piezaObject = new GameObject();
+            piezaObject.AddComponent<Pieza>();
+           Pieza p= piezaObject.GetComponent<Pieza>();
             p.fusionAa = true;
             piezasListas.Add(p);
+            p.gameObject.SetActive(false);
+
         }
         if(!piezasRecogidas[0].piezaA&&!piezasRecogidas[1].piezaA)
-        {  Pieza p = new Pieza();
+        {    GameObject piezaObject = new GameObject();
+            piezaObject.AddComponent<Pieza>();
+            Pieza p= piezaObject.GetComponent<Pieza>();
             p.fusionBb = true;
             piezasListas.Add(p);
-          
+            p.gameObject.SetActive(false);
         }
         if(piezasRecogidas[0].piezaA!=piezasRecogidas[1].piezaA)
-        {  Pieza p = new Pieza();
+        {     GameObject piezaObject = new GameObject();
+            piezaObject.AddComponent<Pieza>();
+            Pieza p= piezaObject.GetComponent<Pieza>();
             p.fusionAb = true;
             piezasListas.Add(p);
+            p.gameObject.SetActive(false);
         
         }
 

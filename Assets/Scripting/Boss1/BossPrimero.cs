@@ -20,8 +20,14 @@ public class BossPrimero : MonoBehaviour
     public Image esfuerzoFill;
 
     public float actualTiempoSinDañoMelee;
-    
 
+    public float multipEspalda;
+    public float multipEspaldaDistancia;
+    public float multipDañoMeleSiStun;
+
+    public bool stunned = false;
+    public float tiempoStun = 23f;
+    private float auxTiempoStun;
     public Player player;
     // Start is called before the first frame update
     void Start()
@@ -38,6 +44,18 @@ public class BossPrimero : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (stunned)
+        {
+            auxTiempoStun -= Time.deltaTime;
+            if (auxTiempoStun <= 0)
+            {
+                auxTiempoStun = 0;
+                stunned = false;
+                esfuerzoActual = 0;
+                VisualUpdateEsfuerzo();
+
+            }
+        }
         if (actualTiempoSinDañoMelee > 0)
         {
             actualTiempoSinDañoMelee -= Time.deltaTime;
@@ -45,7 +63,7 @@ public class BossPrimero : MonoBehaviour
         }
     }
 
-    void ReceiveDamage(float dmg)
+    public void ReceiveDamage(float dmg)
     {
         if (vidaActual > 0)
         {
@@ -61,14 +79,20 @@ public class BossPrimero : MonoBehaviour
             //Muerte
         }
     }
-    void ReceiveEsfuerzo(float dmg)
+   public  void ReceiveEsfuerzo(float dmg)
     {
+        if (stunned)
+        {
+            ReceiveDamage(dmg);
+            return;
+        }
         esfuerzoActual += dmg;
         if (esfuerzoActual > esfuerzoMax)
         {
             print("stun");
             esfuerzoActual = esfuerzoMax;
-            //inicia modo perder vida
+            stunned = true;
+            auxTiempoStun = tiempoStun;
         }
 
         VisualUpdateEsfuerzo();
@@ -84,27 +108,6 @@ public class BossPrimero : MonoBehaviour
     {
         esfuerzoFill.fillAmount = esfuerzoActual / esfuerzoMax;
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        if(actualTiempoSinDañoMelee<=0&&other.CompareTag("PlayerMelee"))
-        {
-            int ataqueSelecc = player.comboCount;
-            ReceiveEsfuerzo(player.dañosNormales[ataqueSelecc]);
-            actualTiempoSinDañoMelee = player.duracionDeAtaqueActual;
-        }
-       
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-       
-            if(other.CompareTag("PlayerRanged"))
-            {
-              
-                ReceiveDamage(player.dañosCargados[player.SeleccionDisparo()]*Time.deltaTime);
-              
-            }
-       
-    }
+  
   
 }
