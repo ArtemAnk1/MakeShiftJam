@@ -42,11 +42,6 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: MaterialBrazos
-    second: {fileID: 2100000, guid: cfb4358c5dc39ac478cdb8beb1191ce9, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
       name: MaterialBrazos.001
     second: {fileID: 2100000, guid: cfb4358c5dc39ac478cdb8beb1191ce9, type: 2}
   - first:
@@ -90,7 +85,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.6
+    globalScale: 0.75
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -144,7 +139,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.6
+    globalScale: 0.0075
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
