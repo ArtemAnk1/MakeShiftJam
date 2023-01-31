@@ -128,8 +128,8 @@ MonoBehaviour:
   fusionAa: 0
   fusionAb: 0
   fusionBb: 0
-  speed: 99
-  pickUpDistance: 1.69
-  activatedDistance: 7.43
+  speed: 156.1
+  pickUpDistance: 3.01
+  activatedDistance: 8.89
   forgetDistance: 12.84
   activated: 0
