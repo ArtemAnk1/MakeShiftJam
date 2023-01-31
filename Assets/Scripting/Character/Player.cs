@@ -70,7 +70,7 @@ public class Player : MonoBehaviour
             Shoot();
         }
         if (canAttack && !dashing && !shooting) Attack();
-     Dash();
+    if(!shooting&&!charging) Dash();
     
     }
     [Space(10)]
