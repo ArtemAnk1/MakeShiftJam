@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb9152e8f67460b43af656150f7ca628, type: 3}
+  m_Name: AtaqueBoss1_GolpeSuelo
+  m_EditorClassIdentifier: 
+  nameAttack: GolpeSuelo
+  duracionAttack:
+  - 1
+  distanciaMax:
+  - 20
+  speedAttack: []
+  cooldownBetweenThings: []
+  pieza: {fileID: 300726322260668976, guid: 00770e7ac07bcb04b93df9efe0d453f1, type: 3}
+  prefab1: {fileID: 0}
+  prefab2: {fileID: 0}
+  prefab3: {fileID: 0}

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb9152e8f67460b43af656150f7ca628, type: 3}
+  m_Name: AtaqueBoss1_ComboSimple
+  m_EditorClassIdentifier: 
+  nameAttack: ComboSimple
+  duracionAttack:
+  - 0.8
+  - 1.5
+  distanciaMax:
+  - 0
+  - 0
+  speedAttack:
+  - 500
+  cooldownBetweenThings:
+  - 0.3
+  pieza: {fileID: 0}
+  prefab1: {fileID: 0}
+  prefab2: {fileID: 0}
+  prefab3: {fileID: 0}
