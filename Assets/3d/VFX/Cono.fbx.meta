@@ -1,19 +1,9 @@
 fileFormatVersion: 2
-guid: 466b257b3830e654ca7f350f7c29a476
+guid: 30c4934eae152924392c3d96e88813dc
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: CortinaMat
-    second: {fileID: 2100000, guid: 0a42d93cc59b13b488553f00e9a0fe30, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PaloMat
-    second: {fileID: 2100000, guid: fad398ec5babb4549a938fb2f4517f4d, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
