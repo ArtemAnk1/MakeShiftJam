@@ -18,9 +18,9 @@ MonoBehaviour:
   - 1
   - 4
   distanciaMax:
-  - 15
+  - 10
   speedAttack: []
   pieza: {fileID: 300726322260668976, guid: 00770e7ac07bcb04b93df9efe0d453f1, type: 3}
   prefab1: {fileID: 8348610196234993021, guid: c6cdcd413ea02a24b971dd1e729065f0, type: 3}
-  prefab2: {fileID: 0}
+  prefab2: {fileID: 8348610196234993021, guid: 67fa9fff13ad70c4facd7eae89866734, type: 3}
   prefab3: {fileID: 0}
