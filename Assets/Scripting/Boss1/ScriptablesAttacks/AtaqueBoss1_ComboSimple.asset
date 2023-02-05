@@ -16,13 +16,13 @@ MonoBehaviour:
   duracionAttack:
   - 0.8
   - 1.5
+  - 0.6
+  - 1.1
   distanciaMax:
   - 0
   - 0
   speedAttack:
   - 500
-  cooldownBetweenThings:
-  - 0.3
   pieza: {fileID: 0}
   prefab1: {fileID: 0}
   prefab2: {fileID: 0}

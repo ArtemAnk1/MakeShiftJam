@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1616100166202343252}
   - component: {fileID: 7075134202554110837}
   m_Layer: 7
-  m_Name: Piedra
+  m_Name: PiedraGorda
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,8 +29,8 @@ Transform:
   m_GameObject: {fileID: 8348610196234993021}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4.9989085, y: 4.9989085, z: 4.9989085}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 8.49, y: 8.49, z: 8.49}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 27

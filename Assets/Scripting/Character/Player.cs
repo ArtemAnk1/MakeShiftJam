@@ -24,6 +24,7 @@ public class Player : MonoBehaviour
     public GameObject bodyRotatingPart;
     public GameObject boss;
     public BossPrimero scriptBoss;
+    public Animator animPersonaje;
     private void Start()
     {
         rotatingPart = GameObject.Find("Rig 1");
@@ -37,6 +38,7 @@ public class Player : MonoBehaviour
         hipStartingY = rotatingPart.transform.position.y;
         boss = FindObjectOfType<BossPrimero>().gameObject;
         scriptBoss = boss.GetComponent<BossPrimero>();
+        animPersonaje = rotatingPart.transform.parent.GetComponent<Animator>();
     }
 
 
@@ -53,14 +55,14 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         if (rb == null) rb = GetComponent<Rigidbody>();
-        if (canMove)
+        if (canMove&&!attacking)
         {
             MovementXY();
         }
        
        
     if(!attacking&&!shooting) BodySpin();
-    
+    animPersonaje.SetFloat("Speed",rb.velocity.magnitude);
     }
    
     void Update()
@@ -104,9 +106,27 @@ public class Player : MonoBehaviour
             actualDistanciaMax = distanciaMaxAtaques[comboCount];
             anguloActual = anguloAperturaAtaques[comboCount];
             attacking = true;
+            if (comboCount == 0)
+            { 
+                animPersonaje.ResetTrigger("Attack2");
+                animPersonaje.ResetTrigger("Attack3");
+                animPersonaje.SetTrigger("Attack1");
+                       
+            }else if (comboCount == 1)
+            {
+                animPersonaje.ResetTrigger("Attack1");
+                animPersonaje.ResetTrigger("Attack3");
+                animPersonaje.SetTrigger("Attack2");
+            }else if (comboCount == 2)
+            {
+                animPersonaje.ResetTrigger("Attack2");
+                animPersonaje.ResetTrigger("Attack1");
+                animPersonaje.SetTrigger("Attack3");
+            }
         }
         else if (attacking)
         {
+            rb.velocity = Vector3.zero;
             CheckBossCollision(anguloActual, actualDistanciaMax, out bool espalda, out bool hit);
             if (hit)
             {
@@ -120,6 +140,7 @@ public class Player : MonoBehaviour
                     if(scriptBoss.stunned)   scriptBoss.ReceiveEsfuerzo(dañosNormales[ataqueSelecc]*scriptBoss.multipDañoMeleSiStun);
                     scriptBoss.ReceiveEsfuerzo(dañosNormales[ataqueSelecc]*multip);
                     scriptBoss.actualTiempoSinDañoMelee = duracionDeAtaqueActual+0.1f;
+                   
                 }
             }
             duracionDeAtaqueActual -= Time.deltaTime;
@@ -166,12 +187,29 @@ public class Player : MonoBehaviour
               
                  comboCount += 1;
                     attacking = true;
-                    ataquesObjetos[comboCount].gameObject.SetActive(true);
+                    
                     duracionDeAtaqueActual = duracionesDeAtaques[comboCount];
                     finishedCombo = false;
                     tiempoActualParaCombar = 0;
                     actualDistanciaMax = distanciaMaxAtaques[comboCount];
                     anguloActual = anguloAperturaAtaques[comboCount];
+                    if (comboCount == 0)
+                    { animPersonaje.ResetTrigger("Attack2");
+                                             animPersonaje.ResetTrigger("Attack3");
+                        animPersonaje.SetTrigger("Attack1");
+                       
+                    }else if (comboCount == 1)
+                    {
+                        animPersonaje.ResetTrigger("Attack1");
+                        animPersonaje.ResetTrigger("Attack3");
+                        animPersonaje.SetTrigger("Attack2");
+                    }else   if (comboCount == 2)
+                    {animPersonaje.ResetTrigger("Attack2");
+                        animPersonaje.ResetTrigger("Attack1");
+                       
+                        animPersonaje.SetTrigger("Attack3");
+                    }
+                    ataquesObjetos[comboCount].gameObject.SetActive(true);
             }
 
           

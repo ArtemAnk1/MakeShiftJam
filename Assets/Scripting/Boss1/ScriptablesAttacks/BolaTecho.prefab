@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 621117074566415179}
   - component: {fileID: 6520073357172083304}
   - component: {fileID: 1616100166202343252}
+  - component: {fileID: -4072417427985295044}
   - component: {fileID: 7075134202554110837}
   m_Layer: 7
-  m_Name: Piedra
+  m_Name: BolaTecho
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,6 +107,21 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-4072417427985295044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8348610196234993021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29291a1426d88364ead086bef0745532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabSombra: {fileID: 2797302185865952379, guid: c660015353893854b9d3a88dc243fd97,
+    type: 3}
+  initialScaleSombra: {x: 0, y: 0, z: 0}
 --- !u!54 &7075134202554110837
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -131,5 +147,5 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 116
+  m_Constraints: 112
   m_CollisionDetection: 0

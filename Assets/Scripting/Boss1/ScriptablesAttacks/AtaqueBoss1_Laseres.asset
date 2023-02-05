@@ -14,14 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameAttack: Laseres
   duracionAttack:
+  - 1.2
   - 0.6
   distanciaMax:
-  - 100
+  - 0
   speedAttack:
-  - 150
-  cooldownBetweenThings:
   - 0
   pieza: {fileID: 5910392229788433218, guid: f54dadaafb6d18f4e966d2550687e6ed, type: 3}
-  prefab1: {fileID: 8348610196234993021, guid: c1ad329b2d0e4ec4395dae9820ef1488, type: 3}
+  prefab1: {fileID: 0}
   prefab2: {fileID: 0}
   prefab3: {fileID: 0}

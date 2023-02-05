@@ -8,9 +8,40 @@ public class Pieza : MonoBehaviour
 
     public bool piezaA = false;
 
-    public bool fusionAa= false;
-    public bool fusionAb= false;
-    public bool fusionBb= false;
+    public bool fusionAa
+    {
+        get { return m_fusionAA;}
+        set
+        {
+            m_fusionAA = value;
+            type = 0;
+        }
+    }
+
+    public bool m_fusionAA;
+    public bool fusionAb
+    {
+        get { return m_fusionAB;}
+        set
+        {
+            m_fusionAB = value;
+            type = 2;
+        }
+    }
+
+    public bool m_fusionAB;
+    public bool fusionBb
+    {
+        get { return m_fusionBB;}
+        set
+        {
+            m_fusionBB = value;
+            type = 3;
+        }
+    }
+
+    public bool m_fusionBB;
+    public int type = 0;
     private GameObject player;
     private Rigidbody rb;
     public float speed=10;

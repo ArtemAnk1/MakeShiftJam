@@ -8,12 +8,12 @@ public class Ataques : ScriptableObject
         public float[] duracionAttack;
         public float[] distanciaMax;
         public float[] speedAttack;
-        public float[] cooldownBetweenThings;
+       
         public GameObject pieza;
         public GameObject prefab1;
         public GameObject prefab2;
         public GameObject prefab3;
-    
+     
     // Start is called before the first frame update
     void Start()
     {

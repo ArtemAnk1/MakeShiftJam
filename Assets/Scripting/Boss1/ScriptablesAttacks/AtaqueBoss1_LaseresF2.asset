@@ -10,16 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb9152e8f67460b43af656150f7ca628, type: 3}
-  m_Name: AtaqueBoss1_GolpeSuelo
+  m_Name: AtaqueBoss1_LaseresF2
   m_EditorClassIdentifier: 
-  nameAttack: GolpeSuelo
+  nameAttack: LaseresF2
   duracionAttack:
-  - 3
-  - 1
+  - 0.7
+  - 0.3
+  - 0.2
   distanciaMax:
-  - 15
-  speedAttack: []
-  pieza: {fileID: 300726322260668976, guid: 00770e7ac07bcb04b93df9efe0d453f1, type: 3}
-  prefab1: {fileID: 8348610196234993021, guid: c6cdcd413ea02a24b971dd1e729065f0, type: 3}
+  - 0
+  speedAttack:
+  - 0
+  pieza: {fileID: 5910392229788433218, guid: f54dadaafb6d18f4e966d2550687e6ed, type: 3}
+  prefab1: {fileID: 0}
   prefab2: {fileID: 0}
   prefab3: {fileID: 0}

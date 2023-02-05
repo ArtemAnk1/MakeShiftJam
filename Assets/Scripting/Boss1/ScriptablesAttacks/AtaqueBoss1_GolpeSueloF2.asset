@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb9152e8f67460b43af656150f7ca628, type: 3}
-  m_Name: AtaqueBoss1_GolpeSuelo
+  m_Name: AtaqueBoss1_GolpeSueloF2
   m_EditorClassIdentifier: 
-  nameAttack: GolpeSuelo
+  nameAttack: GolpeSueloF2
   duracionAttack:
-  - 3
+  - 2
   - 1
+  - 4
   distanciaMax:
   - 15
   speedAttack: []
