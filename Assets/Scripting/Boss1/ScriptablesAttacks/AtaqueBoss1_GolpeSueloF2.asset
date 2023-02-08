@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameAttack: GolpeSueloF2
   duracionAttack:
-  - 2
+  - 3
   - 1
   - 4
   distanciaMax:

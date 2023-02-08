@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameAttack: Laseres
   duracionAttack:
-  - 1.2
+  - 2
   - 0.6
   distanciaMax:
   - 0

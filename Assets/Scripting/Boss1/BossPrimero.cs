@@ -54,7 +54,7 @@ public class BossPrimero : MonoBehaviour
     public float distanciaCorta = 15f;
     public float tiempoTransformacionFase2 = 5f;
     public float auxTiempoTransformacion = 0;
-
+    public Animator anim;
     public float cooldownTrasAtaque
     {
         get => _cooldownTrasAtaque+Random.Range(-modCooldownTrasAtaques,modCooldownTrasAtaques);
@@ -74,7 +74,7 @@ public class BossPrimero : MonoBehaviour
         actualTiempoSinDañoMelee=0;
         VisualUpdateEsfuerzo();
         VisualUpdateHealth();
-        ;
+        anim=GetComponent<Animator>();
     }
 
     public enum EstadosBoss 
@@ -83,10 +83,7 @@ public class BossPrimero : MonoBehaviour
         
     }
     public EstadosBoss estadoActual = EstadosBoss.Movimiento;
-    void Ataca()
-    {
-        
-    }
+  
     private bool CheckDistancia()
     {
         bool cerca=false;
@@ -104,6 +101,7 @@ public class BossPrimero : MonoBehaviour
         Vector3 desPos = (player.transform.position-this.transform.position).normalized;
         desPos.y = 0;
         rb.velocity =  desPos * (Time.deltaTime * movementSPEED);
+        anim.SetFloat("Speed",rb.velocity.magnitude);
     }
 
      public float rotationSpeed = 200;
@@ -114,11 +112,12 @@ public class BossPrimero : MonoBehaviour
         var rotDesired = Quaternion.LookRotation(desPos - this.transform.position, Vector3.up);
         this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, rotDesired,
             rotationSpeed * Time.deltaTime); 
+        anim.SetFloat("Rotation",rb.velocity.magnitude);
     }
    
 
     Ataques CalculaAtaque()
-    { Ataques ataqueSelecc = new Ataques(); 
+    { Ataques ataqueSelecc = ScriptableObject.CreateInstance<Ataques>(); 
              List<Ataques> candidatos=new List<Ataques>();
         if (!fase2)
         {
@@ -238,7 +237,13 @@ public class BossPrimero : MonoBehaviour
             }
         }
     }
-        
+    bool AnimatorIsPlaying(){
+        return anim.GetCurrentAnimatorStateInfo(0).length >
+               anim.GetCurrentAnimatorStateInfo(0).normalizedTime;
+    }
+    bool AnimatorIsPlaying(string stateName){
+        return AnimatorIsPlaying() && anim.GetCurrentAnimatorStateInfo(0).IsName(stateName);
+    }
     void FixedUpdate()
     {
         if (auxCdTrasAtaque > 0)
@@ -299,6 +304,7 @@ public class BossPrimero : MonoBehaviour
                                if (duracionAtaqueActual > 0 && startedAttacking)
                                {   RotarHaciaJugador();
                                    duracionAtaqueActual -= Time.deltaTime;
+                                   if(duracionAtaqueActual<0.8f&&!AnimatorIsPlaying("Embestida"))anim.SetBool("Embestida",true);
                                    Vector3 desPos = (this.transform.position-player.transform.position).normalized;
                                    desPos.y = 0;//Cargando la embestida
                                    rb.velocity =  desPos* (Time.deltaTime * 80);
@@ -330,6 +336,7 @@ public class BossPrimero : MonoBehaviour
                                    {
                                        rb.velocity = Vector3.zero;
                                        embestidaMoviendo = false;
+                                       anim.SetBool("Embestida",false);
                                        FinishAttack();
                                    }
                                }
@@ -345,6 +352,19 @@ public class BossPrimero : MonoBehaviour
                                if (duracionAtaqueActual > 0 && startedAttacking)
                                {  
                                    duracionAtaqueActual -= Time.deltaTime;
+                                   if (duracionAtaqueActual < 2f && !AnimatorIsPlaying("GolpeSueloIzq") &&
+                                       !AnimatorIsPlaying("GolpeSueloDer"))
+                                   {
+                                      int r= Random.Range(0, 2);
+                                      if (r == 1)
+                                      {
+                                          anim.SetTrigger(("GolpeSueloIzq"));
+                                      }
+                                      else
+                                      {
+                                          anim.SetTrigger(("GolpeSueloDer"));
+                                      }
+                                   }
                                    if(duracionAtaqueActual>actualAtaque.duracionAttack[0]*0.6f)RotarHaciaJugador();
                                }
 
@@ -364,6 +384,8 @@ public class BossPrimero : MonoBehaviour
                                          hijoArea = null;
                                          esperandoDesactivarArea = false;
                                         embestidaMoviendo = false;
+                                        anim.ResetTrigger(("GolpeSueloDer"));
+                                        anim.ResetTrigger(("GolpeSueloIzq"));
                                          FinishAttack();
                                          auxCdTrasAtaque += 1;
 
@@ -378,7 +400,7 @@ public class BossPrimero : MonoBehaviour
                                {
                                    startedAttacking = true;
                                    duracionAtaqueActual = actualAtaque.duracionAttack[0];//Duracion attack es tiempo de carga antes de golpear
-                                  
+                                  anim.SetTrigger("Laseres");
                                }
 
                                if (duracionAtaqueActual > 0 && startedAttacking)
@@ -405,29 +427,30 @@ public class BossPrimero : MonoBehaviour
                                if (esperandoDesactivarArea)
                                { 
                                    auxCdAtaque -= Time.deltaTime;
-                                   if (auxCdAtaque < 0&&laserCount==2)
+                                   if (auxCdAtaque < 0&&laserCount==0)
                                    { lineRendGO.SetActive(false);
                                        hijoArea = null;
                                        esperandoDesactivarArea = false;
                                        embestidaMoviendo = false;
+                                       anim.ResetTrigger("Laseres");
                                        FinishAttack();
                                        auxCdLaseres = 0;
                                        laserCount = 0;
                                        //auxCdTrasAtaque += 1;
                                        break;
                                    }
-                                   if (auxCdAtaque < 0&&laserCount<2)
-                                   { lineRendGO.SetActive(false);
-                                       hijoArea = null;
-                                       esperandoDesactivarArea = false;
-                                       embestidaMoviendo = false;
-                                       //FinishAttack();
-                                       
-                                       RepeatLaser();
-                                      
-                                       //auxCdTrasAtaque += 1;
-
-                                   }
+                                   // if (auxCdAtaque < 0&&laserCount<2)
+                                   // { lineRendGO.SetActive(false);
+                                   //     hijoArea = null;
+                                   //     esperandoDesactivarArea = false;
+                                   //     embestidaMoviendo = false;
+                                   //     //FinishAttack();
+                                   //     
+                                   //     RepeatLaser();
+                                   //    
+                                   //     //auxCdTrasAtaque += 1;
+                                   //
+                                   // }
                                  
                                }
 
@@ -452,7 +475,11 @@ public class BossPrimero : MonoBehaviour
                                if (duracionAtaqueActual > 0 && startedAttacking)
                                {   RotarHaciaJugador();
                                    duracionAtaqueActual -= Time.deltaTime;
-                                  if(piedra==null) piedra = Instantiate(actualAtaque.prefab1, manoLanzaPiedra.transform.position,Quaternion.identity);
+                                   if (piedra == null)
+                                   {
+                                       piedra = Instantiate(actualAtaque.prefab1, manoLanzaPiedra.transform.position,Quaternion.identity);
+                                   }
+                                   anim.SetTrigger(("Piedra"));
                                   piedra.transform.parent = manoLanzaPiedra.transform;
                                   piedra.GetComponent<Rigidbody>().velocity = Vector3.zero;
                                   //CARGANDO PIEDRA
@@ -496,7 +523,7 @@ public class BossPrimero : MonoBehaviour
                                        cachedPlayerPos.y = piedra.transform.position.y;
                                        print("PEDRUSCO"+" DISTANCIA: "+Vector3.Distance(piedra.transform.position, cachedPlayerPos) +" MAGNITUD: "+(piedra.transform.position- cachedPlayerPos).magnitude);
                                        if ((piedra.transform.position- cachedPlayerPos).magnitude <= 2)
-                                       {
+                                       { anim.ResetTrigger(("Piedra"));
                                            rb.velocity = Vector3.zero;
                                            //ANIM PIEDRA SE ROMPE
                                            GameObject p=Instantiate(actualAtaque.pieza, piedra.transform.position,
@@ -596,76 +623,7 @@ public class BossPrimero : MonoBehaviour
                                    }
                                }
                                break;
-                            case "PiedraGorda":
-                                  if (startedAttacking == false)
-                               {
-                                   startedAttacking = true;
-                                   duracionAtaqueActual = actualAtaque.duracionAttack[0];//Duracion attack es tiempo de carga
-                                   
-                               }
-
-                               if (duracionAtaqueActual > 0 && startedAttacking)
-                               {   RotarHaciaJugador();
-                                   duracionAtaqueActual -= Time.deltaTime;
-                                  if(piedra==null) piedra = Instantiate(actualAtaque.prefab1, otraLanzaPiedraGorda.transform.position,Quaternion.identity);
-                                  piedra.transform.parent = otraLanzaPiedraGorda.transform;
-                                  piedra.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                                  //CARGANDO PIEDRA
-                               }
-
-                               if (duracionAtaqueActual <= 0 && startedAttacking&&auxCdAtaque==0)
-                               {
-                                 
-                                   cachedPlayerPos = player.transform.position+(player.transform.position-this.transform.position).normalized*2;//duda del 1.2
-                                   cachedPlayerPos.y = player.transform.position.y;
-                                   auxCdAtaque = actualAtaque.duracionAttack[1];//TIEMPO DE LANZAMIENTO DE LA PIEDRA PARA ANIMACION
-                                   //Animacion Lanza Piedra
-                               }
-
-                                  if (auxCdAtaque > 0)
-                                  { 
-                                   auxCdAtaque -= Time.deltaTime;
-                                  
-                                     
-                                  
-                               }
-                                  else if(auxCdAtaque<0)
-                                  {
-                                     
-                                       if (piedra.transform.parent != null)
-                                       {
-                                           piedra.transform.parent=null;
-                                           piedra.transform.position=new Vector3(piedra.transform.position.x,player.transform.position.y,piedra.transform.position.z);
-
-                                       }
-                                       float defaultSpeed = actualAtaque.speedAttack[0];
-                                       if (Vector3.Distance(piedra.transform.position, cachedPlayerPos) <=15)
-                                       {
-                                           defaultSpeed = defaultSpeed - (100 -
-                                                                          Vector3.Magnitude(piedra.transform.position -
-                                                                              cachedPlayerPos) );
-                                       }
-                                       Vector3 desPos = (cachedPlayerPos-piedra.transform.position).normalized;
-                                       desPos.y = 0;
-                                       piedra.GetComponent<Rigidbody>().velocity =  desPos * (Time.deltaTime * defaultSpeed);
-                                       cachedPlayerPos.y = piedra.transform.position.y;
-                                       print("PEDRUSCO"+" DISTANCIA: "+Vector3.Distance(piedra.transform.position, cachedPlayerPos) +" MAGNITUD: "+(piedra.transform.position- cachedPlayerPos).magnitude);
-                                       if ((piedra.transform.position- cachedPlayerPos).magnitude <= 4)
-                                       {
-                                           rb.velocity = Vector3.zero;
-                                           //ANIM PIEDRA SE ROMPE
-                                           GameObject p=Instantiate(actualAtaque.pieza, piedra.transform.position,
-                                               Quaternion.identity);
-                                           p.transform.position= new Vector3(piedra.transform.position.x,player.transform.position.y,piedra.transform.position.z);
-                                           Destroy(piedra,1f);
-                                           piedra = null;
-                                         FinishAttack();
-                                       }
-                                       
-                                   
-                                  }
-
-                                  break;
+                           
                           
                        }
                    }
@@ -729,6 +687,7 @@ public class BossPrimero : MonoBehaviour
                     {
                         rb.velocity = Vector3.zero;
                         actualAtaque= CalculaAtaque();
+                        anim.SetFloat("Speed",0);
                         startedAttacking = false;
                     }
                    else if(auxCdTrasAtaque==0&&actualAtaque!=null)
@@ -745,6 +704,7 @@ public class BossPrimero : MonoBehaviour
 
                                if (duracionAtaqueActual > 0 && startedAttacking)
                                {   RotarHaciaJugador();
+                                   if(duracionAtaqueActual<0.8f&&!AnimatorIsPlaying("Embestida"))anim.SetBool("Embestida",true);
                                    duracionAtaqueActual -= Time.deltaTime;
                                    Vector3 desPos = (this.transform.position-player.transform.position).normalized;
                                    desPos.y = 0;//Cargando la embestida
@@ -782,12 +742,12 @@ public class BossPrimero : MonoBehaviour
                                            startedAttacking = false;
                                            
                                            embestidasCountF2 += 1;
-
+                                           anim.SetBool("Embestida",false);
 
                                        }
                                        else
                                        {
-                                          
+                                           anim.SetBool("Embestida",false);
                                             FinishAttack();
                                        }
                                    }
@@ -813,6 +773,19 @@ public class BossPrimero : MonoBehaviour
                                if (duracionAtaqueActual > 0 && startedAttacking)
                                {  
                                    duracionAtaqueActual -= Time.deltaTime;
+                                   if (duracionAtaqueActual < 0.9f && !AnimatorIsPlaying("GolpeSueloIzq") &&
+                                       !AnimatorIsPlaying("GolpeSueloDer"))
+                                   {
+                                       int r= Random.Range(0, 2);
+                                       if (r == 1)
+                                       {
+                                           anim.SetTrigger(("GolpeSueloIzq"));
+                                       }
+                                       else
+                                       {
+                                           anim.SetTrigger(("GolpeSueloDer"));
+                                       }
+                                   }
                                    if(duracionAtaqueActual>actualAtaque.duracionAttack[0]*0.6f)RotarHaciaJugador();
                                }
 
@@ -833,6 +806,8 @@ public class BossPrimero : MonoBehaviour
                                          hijoArea = null;
                                          esperandoDesactivarArea = false;
                                         embestidaMoviendo = false;
+                                        anim.ResetTrigger(("GolpeSueloDer"));
+                                        anim.ResetTrigger(("GolpeSueloIzq"));
                                          FinishAttack();
                                          auxCdTrasAtaque += 1;
 
@@ -842,12 +817,86 @@ public class BossPrimero : MonoBehaviour
                                       
                                
                                break;
+                            case "PiedraGorda":
+                                  if (startedAttacking == false)
+                               {
+                                   startedAttacking = true;
+                                   duracionAtaqueActual = actualAtaque.duracionAttack[0];//Duracion attack es tiempo de carga
+                                   
+                               }
+
+                               if (duracionAtaqueActual > 0 && startedAttacking)
+                               {   RotarHaciaJugador();
+                                   duracionAtaqueActual -= Time.deltaTime;
+                                   if (piedra == null)
+                                   {
+                                       piedra = Instantiate(actualAtaque.prefab1, otraLanzaPiedraGorda.transform.position,Quaternion.identity);
+                                       anim.SetTrigger(("PiedraGorda"));
+                                   }
+                                  piedra.transform.parent = otraLanzaPiedraGorda.transform;
+                                  piedra.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                                  //CARGANDO PIEDRA
+                               }
+
+                               if (duracionAtaqueActual <= 0 && startedAttacking&&auxCdAtaque==0)
+                               {
+                                 
+                                   cachedPlayerPos = player.transform.position+(player.transform.position-this.transform.position).normalized*2;//duda del 1.2
+                                   cachedPlayerPos.y = player.transform.position.y;
+                                   auxCdAtaque = actualAtaque.duracionAttack[1];//TIEMPO DE LANZAMIENTO DE LA PIEDRA PARA ANIMACION
+                                   //Animacion Lanza Piedra
+                               }
+
+                                  if (auxCdAtaque > 0)
+                                  { 
+                                   auxCdAtaque -= Time.deltaTime;
+                                  
+                                     
+                                  
+                               }
+                                  else if(auxCdAtaque<0)
+                                  {
+                                     
+                                       if (piedra.transform.parent != null)
+                                       {
+                                           piedra.transform.parent=null;
+                                           piedra.transform.position=new Vector3(piedra.transform.position.x,player.transform.position.y,piedra.transform.position.z);
+
+                                       }
+                                       float defaultSpeed = actualAtaque.speedAttack[0];
+                                       if (Vector3.Distance(piedra.transform.position, cachedPlayerPos) <=15)
+                                       {
+                                           defaultSpeed = defaultSpeed - (100 -
+                                                                          Vector3.Magnitude(piedra.transform.position -
+                                                                              cachedPlayerPos) );
+                                       }
+                                       Vector3 desPos = (cachedPlayerPos-piedra.transform.position).normalized;
+                                       desPos.y = 0;
+                                       piedra.GetComponent<Rigidbody>().velocity =  desPos * (Time.deltaTime * defaultSpeed);
+                                       cachedPlayerPos.y = piedra.transform.position.y;
+                                       print("PEDRUSCO"+" DISTANCIA: "+Vector3.Distance(piedra.transform.position, cachedPlayerPos) +" MAGNITUD: "+(piedra.transform.position- cachedPlayerPos).magnitude);
+                                       if ((piedra.transform.position- cachedPlayerPos).magnitude <= 4)
+                                       { anim.ResetTrigger(("PiedraGorda"));
+                                           rb.velocity = Vector3.zero;
+                                           //ANIM PIEDRA SE ROMPE
+                                           GameObject p=Instantiate(actualAtaque.pieza, piedra.transform.position,
+                                               Quaternion.identity);
+                                           p.transform.position= new Vector3(piedra.transform.position.x,player.transform.position.y,piedra.transform.position.z);
+                                           Destroy(piedra,1f);
+                                           piedra = null;
+                                         FinishAttack();
+                                       }
+                                       
+                                   
+                                  }
+
+                                  break;
                            case "LaseresF2":
                                if (startedAttacking == false&&auxCdLaseres==0)
                                {
                                    startedAttacking = true;
                                    duracionAtaqueActual = actualAtaque.duracionAttack[0];//Duracion attack es tiempo de carga antes de golpear
-                                  
+                                   anim.SetTrigger("Laseres");
                                }
                                if (duracionAtaqueActual > 0 && startedAttacking)
                                {  
@@ -879,7 +928,7 @@ public class BossPrimero : MonoBehaviour
                                        esperandoDesactivarArea = false;
                                        embestidaMoviendo = false;
                                        if (laseresCountF2 == 1)
-                                       {
+                                       {anim.ResetTrigger("Laseres");
                                            FinishAttack();
                                            laserCount = 0;
                                            auxCdLaseres = 0;

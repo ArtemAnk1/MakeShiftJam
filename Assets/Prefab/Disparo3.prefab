@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 6520073357172083304}
   - component: {fileID: 1616100166202343252}
   - component: {fileID: 7075134202554110837}
-  m_Layer: 7
-  m_Name: Piedra
+  - component: {fileID: 9187914860177793052}
+  m_Layer: 9
+  m_Name: Disparo3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,11 +30,11 @@ Transform:
   m_GameObject: {fileID: 8348610196234993021}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4.9989085, y: 4.9989085, z: 4.9989085}
+  m_LocalScale: {x: 6.971246, y: 6.971246, z: 6.971246}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 27
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &621117074566415179
 MeshFilter:
@@ -63,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2cb08a72241684941878d142682479f7, type: 2}
+  - {fileID: 2100000, guid: ab31a90eafa599744ad048fe0552d8d4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -133,3 +134,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &9187914860177793052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8348610196234993021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbb55f54d41ff3447b1b4922e5fc1b79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normal: 0
+  "da\xF1o": 30
+  speed: 150
+  direccion: {x: 0, y: 0, z: 0}

@@ -9,6 +9,8 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal.Internal;
 using UnityEngine.Serialization;
+using UnityEngine.Animations.Rigging;
+
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 using UnityEngine.UI;
@@ -27,8 +29,8 @@ public class Player : MonoBehaviour
     public Animator animPersonaje;
     private void Start()
     {
-        rotatingPart = GameObject.Find("Rig 1");
-        bodyRotatingPart = GameObject.Find("Rig2");
+       // rotatingPart = GameObject.Find("Rig 1");
+       // bodyRotatingPart = GameObject.Find("Rig2");
         cursor = FindObjectOfType<CursorPointer>().gameObject;
         currentSpeedMult = baseSpeedMult;
         GetWorldsForward();
@@ -39,6 +41,7 @@ public class Player : MonoBehaviour
         boss = FindObjectOfType<BossPrimero>().gameObject;
         scriptBoss = boss.GetComponent<BossPrimero>();
         animPersonaje = rotatingPart.transform.parent.GetComponent<Animator>();
+        barraCarga.fillAmount = 0;
     }
 
 
@@ -106,6 +109,7 @@ public class Player : MonoBehaviour
             actualDistanciaMax = distanciaMaxAtaques[comboCount];
             anguloActual = anguloAperturaAtaques[comboCount];
             attacking = true;
+            rotatingPart.GetComponent<MultiParentConstraint>().weight = 0;
             if (comboCount == 0)
             { 
                 animPersonaje.ResetTrigger("Attack2");
@@ -145,7 +149,7 @@ public class Player : MonoBehaviour
             }
             duracionDeAtaqueActual -= Time.deltaTime;
             if (duracionDeAtaqueActual <= 0)
-            {
+            {rotatingPart.GetComponent<MultiParentConstraint>().weight = 1;
                 duracionDeAtaqueActual = 0;
                 attacking = false;
                 ataquesObjetos[comboCount].gameObject.SetActive(false);
@@ -187,7 +191,7 @@ public class Player : MonoBehaviour
               
                  comboCount += 1;
                     attacking = true;
-                    
+                    rotatingPart.GetComponent<MultiParentConstraint>().weight = 0;
                     duracionDeAtaqueActual = duracionesDeAtaques[comboCount];
                     finishedCombo = false;
                     tiempoActualParaCombar = 0;
@@ -290,8 +294,11 @@ public class Player : MonoBehaviour
     public float[] anguloAperturaCargados;
     public float cooldownTrasDisparo = 2f;
     [SerializeField] private float timerAuxDisp=0;
-  
-    
+    public GameObject[] disparosProyectiles;
+    public bool disparos = true;
+    public GameObject puntoDisparo;
+    public Image barraCarga;
+    // ReSharper disable Unity.PerformanceAnalysis
     void Shoot()
     {
         if (timerAuxDisp > 0)
@@ -318,7 +325,21 @@ public class Player : MonoBehaviour
 
             if (charging)
             {
-                canMove = false;
+                barraCarga.fillAmount = auxTiempoCarga / tiempoActualDeCarga;
+                if (auxTiempoCarga >= tiempoActualDeCarga) {barraCarga.color = Color.red;}
+                else
+                {
+                    barraCarga.color = Color.white;
+                }
+                if (Camera.main != null)
+                {
+                    var rotation = Camera.main.transform.rotation;
+                    barraCarga.transform.LookAt(
+                        barraCarga.gameObject.transform.position + rotation * Vector3.forward,
+                        rotation * Vector3.up);
+                }
+
+                // canMove = false;
                 if (Input.GetKey(KeyCode.Mouse1))
                 {
                     auxTiempoCarga += Time.deltaTime;
@@ -333,20 +354,29 @@ public class Player : MonoBehaviour
                         shooting = true;
                         auxTiempoCarga = 0;
                         duracionDeDisparoActual = duracionesDeDisparos[SeleccionDisparo()];
-                        
-                        disparosObjetos[SeleccionDisparo()].SetActive((true));
+                        if (disparos)
+                        {
+                            GameObject disparado = Instantiate(disparosProyectiles[SeleccionDisparo()],puntoDisparo.transform.position,Quaternion.identity);
+                            disparado.GetComponent<Disparo>().SetDirection(boss.transform.position-puntoDisparo.transform.position);
+                        }
+                        else
+                        {
+                             disparosObjetos[SeleccionDisparo()].SetActive((true));
+                        }
+                       
                         anguloActual = anguloAperturaCargados[SeleccionDisparo()];
                         actualDistanciaMax = distanciaMaxCargado[SeleccionDisparo()];
                     }
                     else
-                    {  charging = false;
+                    {  barraCarga.fillAmount = 0;
+                        charging = false;
                         canMove = true;
                         auxTiempoCarga = 0;
                         tiempoActualDeCarga = 0;
                     }
                 }
                 else
-                {
+                { barraCarga.fillAmount = 0;
                     charging = false;
                     canMove = true;
                     auxTiempoCarga = 0;
@@ -355,32 +385,59 @@ public class Player : MonoBehaviour
             }
 
             if (shooting)
-            {  CheckBossCollision(anguloActual, actualDistanciaMax, out bool espalda, out bool hit);
-                if (hit)
+            {  barraCarga.fillAmount = 0;
+                if (disparos)
                 {
+                    duracionDeDisparoActual -= Time.deltaTime;
+                    if (duracionDeDisparoActual < 0)
+                    {
+                        duracionDeDisparoActual = 0;
+                        
+                        shooting = false;
+                        piezasListas.Remove(piezasListas[0]);
+                        UpdatePiezas();
+                        canMove = true;
+                        timerAuxDisp = cooldownTrasDisparo;
+                        fullPiezas = false;
+                    }
+                }
+                else
+                {
+                    CheckBossCollision(anguloActual, actualDistanciaMax, out bool espalda, out bool hit);
+                    if (hit)
+                    {
                    
            
                         int ataqueSelecc = SeleccionDisparo();
                         float multip = 1;
                         if (espalda) multip = scriptBoss.multipEspaldaDistancia;
-                    
-                        if(scriptBoss.stunned)   scriptBoss.ReceiveDamage(dañosCargados[ataqueSelecc]*Time.deltaTime);
-                        scriptBoss.ReceiveDamage(dañosCargados[ataqueSelecc]*multip*Time.deltaTime);
+
+                        if (scriptBoss.stunned)
+                        {
+                            scriptBoss.ReceiveDamage(dañosCargados[ataqueSelecc]*Time.deltaTime);
+                        }
+                        else
+                        {
+                            scriptBoss.ReceiveDamage(dañosCargados[ataqueSelecc]*multip*Time.deltaTime);
+                        }
+                      
                         
                     
+                    }
+                    duracionDeDisparoActual -= Time.deltaTime;
+                    if (duracionDeDisparoActual < 0)
+                    {
+                        duracionDeDisparoActual = 0;
+                        disparosObjetos[SeleccionDisparo()].SetActive((false));
+                        shooting = false;
+                        piezasListas.Remove(piezasListas[0]);
+                        UpdatePiezas();
+                        canMove = true;
+                        timerAuxDisp = cooldownTrasDisparo;
+                        fullPiezas = false;
+                    }
                 }
-                duracionDeDisparoActual -= Time.deltaTime;
-                if (duracionDeDisparoActual < 0)
-                {
-                    duracionDeDisparoActual = 0;
-                    disparosObjetos[SeleccionDisparo()].SetActive((false));
-                    shooting = false;
-                    piezasListas.Remove(piezasListas[0]);
-                    UpdatePiezas();
-                    canMove = true;
-                    timerAuxDisp = cooldownTrasDisparo;
-                    fullPiezas = false;
-                }
+               
             }
         }
            

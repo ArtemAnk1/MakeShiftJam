@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameAttack: EmbestidaF2
   duracionAttack:
-  - 1.2
+  - 1.5
   - 1.5
   distanciaMax: []
   speedAttack:
