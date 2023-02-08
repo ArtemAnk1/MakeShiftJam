@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ebb6fe3978327dd4abae7a18c4963958
+guid: 9a67e8311af1851438dcda32e3507a3b
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,53 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: BackB1_Mat
-    second: {fileID: 2100000, guid: edd3d29d671cdfa47b5e98c7327ce5c9, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: CabezaB1_Mat
-    second: {fileID: 2100000, guid: 0bf0605639b7aa64aa2b73f7e03efc40, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: ChapaFrontal_Mat
-    second: {fileID: 2100000, guid: 513a9e12cf491804c8b8beb8c78e0e2c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: CuerdaB1_Mat
-    second: {fileID: 2100000, guid: 3ad49f9b273edcb44b894fbcbb9682e7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: CuernosB1_Mat
-    second: {fileID: 2100000, guid: 93aadac19d68798488b33d2e373a3e54, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: CuerpoB1_Mat
-    second: {fileID: 2100000, guid: a1cfecf65de34164a9eb6d76aea2c186, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: HojasB1_Mat
-    second: {fileID: 2100000, guid: 81cd134ae444cc74bb493b65224c5eb7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: MaterialBrazos.001
-    second: {fileID: 2100000, guid: cfb4358c5dc39ac478cdb8beb1191ce9, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PiernasB1_Mat.001
-    second: {fileID: 2100000, guid: 966cacad3c0189246bf0a4b6a3eb28b1, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Roca_Mat
-    second: {fileID: 2100000, guid: 72df035e2404e7b4cacd09df6e875390, type: 2}
+      name: Material
+    second: {fileID: 2100000, guid: 574914b73e261c843b72cb303b628992, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -85,7 +40,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.75
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -139,7 +94,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.75
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
