@@ -128,7 +128,7 @@ public class BossPrimero : MonoBehaviour
         {
             foreach (Ataques att in ataquesEnemigo)
             {
-                if (att.nameAttack == "Embestida" || att.nameAttack == "GolpeSuelo" || att.nameAttack == "ComboSimple"|| att.nameAttack == "PiedraGorda")//piedra corta distancia
+                if (att.nameAttack == "Embestida" || att.nameAttack == "GolpeSuelo" || att.nameAttack == "ComboSimple")//piedra corta distancia
                 {
                     candidatos.Add(att);
                 }
@@ -137,7 +137,7 @@ public class BossPrimero : MonoBehaviour
         {
             foreach (Ataques att in ataquesEnemigo)
             {
-                if (att.nameAttack == "Embestida" || att.nameAttack == "Piedra" || att.nameAttack == "Laseres"|| att.nameAttack == "PiedraGorda")
+                if (att.nameAttack == "Embestida" || att.nameAttack == "Piedra" || att.nameAttack == "Laseres")
                 {
                     candidatos.Add(att);
                 }
@@ -160,7 +160,7 @@ public class BossPrimero : MonoBehaviour
             {
                 foreach (Ataques att in ataquesEnemigoF2)
                 {
-                    if (att.nameAttack == "EmbestidaF2" || att.nameAttack == "GolpeSueloF2" || att.nameAttack == "ComboSimpleF2")//piedra corta distancia
+                    if (att.nameAttack == "EmbestidaF2" || att.nameAttack == "GolpeSueloF2" || att.nameAttack == "ComboSimpleF2"|| att.nameAttack == "PiedraGorda")//piedra corta distancia
                     {
                         candidatos.Add(att);
                     }
@@ -169,7 +169,7 @@ public class BossPrimero : MonoBehaviour
             {
                 foreach (Ataques att in ataquesEnemigoF2)
                 {
-                    if (att.nameAttack == "EmbestidaF2" || att.nameAttack == "GolpeSueloF2" || att.nameAttack == "LaseresF2")
+                    if (att.nameAttack == "EmbestidaF2" || att.nameAttack == "GolpeSueloF2" || att.nameAttack == "LaseresF2"|| att.nameAttack == "PiedraGorda")
                     {
                         candidatos.Add(att);
                     }
@@ -380,8 +380,10 @@ public class BossPrimero : MonoBehaviour
                                  { if(duracionAtaqueActual>actualAtaque.duracionAttack[1]*0.5f)RotarHaciaJugador();
                                      auxCdAtaque -= Time.deltaTime;
                                      if (auxCdAtaque < 0)
-                                     {hijoArea.SetActive((false));
+                                     {if(hijoArea!=null)hijoArea.SetActive((false));
                                          hijoArea = null;
+                                          GameObject p=Instantiate(actualAtaque.pieza, this.transform.position,
+                                                                                        Quaternion.identity);
                                          esperandoDesactivarArea = false;
                                         embestidaMoviendo = false;
                                         anim.ResetTrigger(("GolpeSueloDer"));
@@ -425,7 +427,12 @@ public class BossPrimero : MonoBehaviour
                                }
 
                                if (esperandoDesactivarArea)
-                               { 
+                               { if (Physics.SphereCast(puntoLaserCabeza.transform.position,6f,lineRend.GetPosition(1)-lineRend.GetPosition(0), out RaycastHit t, 1000))
+                                   {  
+                                       Debug.DrawRay(transform.position,new Vector3((lineRend.GetPosition(1)-lineRend.GetPosition(0)).normalized.x,0, ((lineRend.GetPosition(1)-lineRend.GetPosition(0)).normalized.z))*50f,Color.red,2f);
+                                       player.GetComponent<Player>().RecibirDaño("Laser");
+                                    
+                                   }
                                    auxCdAtaque -= Time.deltaTime;
                                    if (auxCdAtaque < 0&&laserCount==0)
                                    { lineRendGO.SetActive(false);
@@ -529,7 +536,7 @@ public class BossPrimero : MonoBehaviour
                                            GameObject p=Instantiate(actualAtaque.pieza, piedra.transform.position,
                                                Quaternion.identity);
                                            p.transform.position= new Vector3(piedra.transform.position.x,player.transform.position.y,piedra.transform.position.z);
-                                           Destroy(piedra,1f);
+                                           Destroy(piedra,0.5f);
                                            piedra = null;
                                          FinishAttack();
                                        }
@@ -801,9 +808,12 @@ public class BossPrimero : MonoBehaviour
                                  if (esperandoDesactivarArea)
                                  { if(duracionAtaqueActual>actualAtaque.duracionAttack[1]*0.5f)RotarHaciaJugador();
                                      auxCdAtaque -= Time.deltaTime;
+                                     
                                      if (auxCdAtaque < 0)
-                                     {hijoArea.SetActive((false));
+                                     {if(hijoArea!=null)hijoArea.SetActive((false));
                                          hijoArea = null;
+                                         GameObject p=Instantiate(actualAtaque.pieza, this.transform.position,
+                                             Quaternion.identity);
                                          esperandoDesactivarArea = false;
                                         embestidaMoviendo = false;
                                         anim.ResetTrigger(("GolpeSueloDer"));
@@ -920,7 +930,12 @@ public class BossPrimero : MonoBehaviour
                                }
 
                                if (esperandoDesactivarArea)
-                               { 
+                               {  if (Physics.SphereCast(puntoLaserCabeza.transform.position,6f,lineRend.GetPosition(1)-lineRend.GetPosition(0), out RaycastHit t, 1000))
+                                   {  
+                                       Debug.DrawRay(transform.position,new Vector3((lineRend.GetPosition(1)-lineRend.GetPosition(0)).normalized.x,0, ((lineRend.GetPosition(1)-lineRend.GetPosition(0)).normalized.z))*50f,Color.red,2f);
+                                      player.GetComponent<Player>().RecibirDaño("Laser");
+                                    
+                                   }
                                    auxCdAtaque -= Time.deltaTime;
                                    if (auxCdAtaque < 0&&laserCount==2)
                                    { lineRendGO.SetActive(false);

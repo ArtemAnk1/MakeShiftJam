@@ -6,6 +6,11 @@ TagManager:
   tags:
   - PlayerMelee
   - PlayerRanged
+  - GolpeSuelo
+  - Laser
+  - Piedra
+  - PiedraGorda
+  - PiedrasTecho
   layers:
   - Default
   - TransparentFX

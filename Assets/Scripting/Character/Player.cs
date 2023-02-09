@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -42,6 +43,8 @@ public class Player : MonoBehaviour
         scriptBoss = boss.GetComponent<BossPrimero>();
         animPersonaje = rotatingPart.transform.parent.GetComponent<Animator>();
         barraCarga.fillAmount = 0;
+        vidaActual = vidaMax;
+        UpdateBarraVida();
     }
 
 
@@ -354,8 +357,10 @@ public class Player : MonoBehaviour
                         shooting = true;
                         auxTiempoCarga = 0;
                         duracionDeDisparoActual = duracionesDeDisparos[SeleccionDisparo()];
+                        
                         if (disparos)
                         {
+                            duracionDeDisparoActual = 0.3f;
                             GameObject disparado = Instantiate(disparosProyectiles[SeleccionDisparo()],puntoDisparo.transform.position,Quaternion.identity);
                             disparado.GetComponent<Disparo>().SetDirection(boss.transform.position-puntoDisparo.transform.position);
                         }
@@ -489,7 +494,7 @@ public class Player : MonoBehaviour
         if (piezasRecogidas.Count == 0)
         {
             
-            if (piezasListas.Count <3)
+            if (piezasListas.Count <maxCapacidadPiezas)
             {
           
                 
@@ -536,8 +541,31 @@ public class Player : MonoBehaviour
             slots[2].transform.GetChild(0).GetComponent<Image>().sprite; 
         slots[1].transform.GetChild(1).GetComponent<Image>().sprite =
             slots[2].transform.GetChild(1).GetComponent<Image>().sprite;
-        slots[2].transform.GetChild(0).GetComponent<Image>().sprite = defaultSlotSprite;
+      
+       
+
+        if (maxCapacidadPiezas == 3)
+        {
+            slots[2].transform.GetChild(0).GetComponent<Image>().sprite = defaultSlotSprite; 
             slots[2].transform.GetChild(1).GetComponent<Image>().sprite = defaultSlotSprite;
+        }
+        if (maxCapacidadPiezas == 6)
+        {  slots[2].transform.GetChild(0).GetComponent<Image>().sprite =
+                slots[3].transform.GetChild(0).GetComponent<Image>().sprite; 
+            slots[2].transform.GetChild(1).GetComponent<Image>().sprite =
+                slots[3].transform.GetChild(1).GetComponent<Image>().sprite;
+            slots[3].transform.GetChild(0).GetComponent<Image>().sprite =
+                slots[4].transform.GetChild(0).GetComponent<Image>().sprite; 
+            slots[3].transform.GetChild(1).GetComponent<Image>().sprite =
+                slots[4].transform.GetChild(1).GetComponent<Image>().sprite;
+            slots[4].transform.GetChild(0).GetComponent<Image>().sprite =
+                slots[5].transform.GetChild(0).GetComponent<Image>().sprite; 
+            slots[4].transform.GetChild(1).GetComponent<Image>().sprite =
+                slots[5].transform.GetChild(1).GetComponent<Image>().sprite;
+            slots[5].transform.GetChild(0).GetComponent<Image>().sprite = defaultSlotSprite; 
+            slots[5].transform.GetChild(1).GetComponent<Image>().sprite = defaultSlotSprite;
+        }
+          
 
     }
     void AddVisualSlot(Pieza p)
@@ -618,7 +646,78 @@ public class Player : MonoBehaviour
             }
         }else if (piezasListas.Count == 3)
         {
-         
+            if (piezasRecogidas.Count == 1)
+            {
+                if (p.piezaA)
+                {
+                    slots[3].transform.GetChild(0).GetComponent<Image>().sprite = spritePiezas[0];
+                }
+                else
+                {
+                    slots[3].transform.GetChild(0).GetComponent<Image>().sprite = spritePiezas[1];
+                }
+            }
+            else if (piezasRecogidas.Count == 2)
+            {
+                if (p.piezaA)
+                {
+                    slots[3].transform.GetChild(1).GetComponent<Image>().sprite = spritePiezas[0];
+                }
+                else
+                {
+                    slots[3].transform.GetChild(1).GetComponent<Image>().sprite = spritePiezas[1];
+                }
+            }
+        }
+        else if (piezasListas.Count == 4)
+        {
+            if (piezasRecogidas.Count == 1)
+            {
+                if (p.piezaA)
+                {
+                    slots[4].transform.GetChild(0).GetComponent<Image>().sprite = spritePiezas[0];
+                }
+                else
+                {
+                    slots[4].transform.GetChild(0).GetComponent<Image>().sprite = spritePiezas[1];
+                }
+            }
+            else if (piezasRecogidas.Count == 2)
+            {
+                if (p.piezaA)
+                {
+                    slots[4].transform.GetChild(1).GetComponent<Image>().sprite = spritePiezas[0];
+                }
+                else
+                {
+                    slots[4].transform.GetChild(1).GetComponent<Image>().sprite = spritePiezas[1];
+                }
+            }
+        }
+        else if (piezasListas.Count == 5)
+        {
+            if (piezasRecogidas.Count == 1)
+            {
+                if (p.piezaA)
+                {
+                    slots[5].transform.GetChild(0).GetComponent<Image>().sprite = spritePiezas[0];
+                }
+                else
+                {
+                    slots[5].transform.GetChild(0).GetComponent<Image>().sprite = spritePiezas[1];
+                }
+            }
+            else if (piezasRecogidas.Count == 2)
+            {
+                if (p.piezaA)
+                {
+                    slots[5].transform.GetChild(1).GetComponent<Image>().sprite = spritePiezas[0];
+                }
+                else
+                {
+                    slots[5].transform.GetChild(1).GetComponent<Image>().sprite = spritePiezas[1];
+                }
+            }
         }
 
        
@@ -817,5 +916,99 @@ public class Player : MonoBehaviour
 
         rb.velocity = desiredHeading * (moveSpeedBase * currentSpeedMult * Time.deltaTime);
       
+    }
+
+    public float vidaActual;
+    public float vidaMax;
+    public float dañoEmbestidaF1 = 10;
+    public float dañoEmbestidaF2 = 20;
+    public float dañoPiedraNormal = 20;
+    public float dañoPiedraGorda = 30;
+    public float dañoGolpeSuelo = 20;
+    public float dañoGolpeSueloF2 = 30;
+    public float dañoPiedrasCielo = 15;
+    public float dañoLaserF1 = 20;
+    public float dañoLaserF2 = 30;
+    void UpdateBarraVida()
+    {
+        barraVida.fillAmount = vidaActual / vidaMax;
+
+    }
+    public void RecibirDaño(string name)
+    {
+        if (name == "Laser")
+        {
+           if(scriptBoss.fase2) {vidaActual -= Time.deltaTime * dañoLaserF2;}
+           else
+           {
+               vidaActual -= Time.deltaTime * dañoLaserF1;
+           }
+        }
+
+        UpdateBarraVida();
+        if (vidaActual < 0)
+        {
+            //Muerte
+        }
+    }
+
+    public Image barraVida;
+    public void RecibirDaño(float dmg)
+    {
+        vidaActual -= dmg;
+        if (vidaActual < 0)
+        {
+            //Muerte
+        }
+
+        UpdateBarraVida();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.GetComponent<CollidersHijos>())
+        {
+            if (scriptBoss.embestidaMoviendo)
+            {
+                if (scriptBoss.fase2)
+                {
+                    RecibirDaño(dañoEmbestidaF2);
+                }
+                else
+                {
+                    RecibirDaño(dañoEmbestidaF1);
+                }
+            }
+        }
+
+        if (collision.gameObject.CompareTag("Piedra"))
+        {
+            RecibirDaño(dañoPiedraNormal);
+        }
+        if (collision.gameObject.CompareTag("PiedraGorda"))
+        {
+            RecibirDaño(dañoPiedraGorda);
+        }
+        if (collision.gameObject.CompareTag("PiedrasTecho"))
+        {
+            RecibirDaño(dañoPiedrasCielo);
+        }
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("GolpeSuelo"))
+        {
+            
+            if (scriptBoss.fase2)
+            {
+                RecibirDaño(dañoGolpeSueloF2);
+            }
+            else
+            {
+                RecibirDaño(dañoGolpeSuelo);
+            }
+        }
     }
 }
